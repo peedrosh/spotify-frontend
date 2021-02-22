@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { ThemeProvider } from 'styled-components';
+import Loading from './screens/Loading';
+import Permission from './screens/Permission';
+import Playlists from './screens/Playlists';
+import GlobalStyle from './styles/global';
+import light from './styles/theme/light';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+const App: React.FC = () => {
+  const [permission, setPermission] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  navigator.permissions.query({ name: 'geolocation' }).then(result => {
+    if (result.state === 'granted') {
+      setPermission(true);
+    }
+
+    setLoading(false);
+  });
+
+  return loading ? (
+    <Loading />
+  ) : (
+    <ThemeProvider theme={light}>
+      <GlobalStyle />
+      {permission ? <Playlists /> : <Permission />}
+    </ThemeProvider>
   );
-}
+};
 
 export default App;
